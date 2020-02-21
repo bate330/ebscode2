@@ -1,0 +1,32 @@
+unit PrinterThread;
+
+
+interface uses System.Classes;
+
+type
+
+         { TPrinterThread }
+
+         TPrinterThread = class(TThread)
+         protected
+                  procedure Execute(); override;
+         end;
+
+
+implementation
+
+{ TPrinterThread }
+
+procedure TPrinterThread.Execute();
+begin
+  //FreeOnTerminated := true;
+
+  //while not (Terminated or Application.Terminated) do
+  begin
+
+  end;
+
+end;
+
+end.
+

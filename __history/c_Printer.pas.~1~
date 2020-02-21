@@ -1,0 +1,67 @@
+unit c_Printer;
+
+interface
+uses
+System.SysUtils, System.Classes, mpComPort;
+
+//==============================================================================
+type
+
+  TPrinter = class(TObject)
+  private
+    Com: TmpComPort;
+    function GetPort: Byte;
+    procedure SetPort(const AValue: Byte);
+    function GetBaudRate: Integer;
+    procedure SetBaudRate(const Value: Integer);
+
+  public
+    constructor Create;
+    destructor Destroy; override;
+
+    property Port: Byte read GetPort write SetPort;
+    property BaudRate: Integer read GetBaudRate write SetBaudRate;
+  end;
+
+//==============================================================================
+var
+  Printer: TPrinter;
+
+//==============================================================================
+implementation
+{ TPrinter }
+
+constructor TPrinter.Create;
+begin
+  inherited Create;
+  Com := TmpComPort.Create(nil);
+end;
+
+destructor TPrinter.Destroy;
+begin
+  FreeAndNil(Com);
+  inherited Destroy;
+end;
+
+function TPrinter.GetBaudRate: Integer;
+begin
+  Result := Com.Baudrate;
+end;
+
+function TPrinter.GetPort: Byte;
+begin
+  Result := Com.Port;
+end;
+
+procedure TPrinter.SetBaudRate(const Value: Integer);
+begin
+  Com.BaudRate := Value;
+end;
+
+procedure TPrinter.SetPort(const AValue: Byte);
+begin
+  Com.Port := AValue;
+end;
+
+end.
+

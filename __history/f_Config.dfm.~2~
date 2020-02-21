@@ -1,0 +1,35 @@
+inherited ConfigForm: TConfigForm
+  Caption = 'Konfiguracja...'
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  inherited CancelButton: TButton
+    ExplicitLeft = 421
+    ExplicitTop = 272
+  end
+  inherited OkButton: TButton
+    ExplicitLeft = 340
+    ExplicitTop = 272
+  end
+  object PortComboBox: TComboBox
+    Left = 64
+    Top = 80
+    Width = 145
+    Height = 21
+    Style = csDropDownList
+    TabOrder = 2
+    TextHint = 'Port..'
+  end
+  object BaudrateComboBox: TComboBox
+    Left = 270
+    Top = 80
+    Width = 145
+    Height = 21
+    Style = csDropDownList
+    TabOrder = 3
+    TextHint = 'Baudrate..'
+    Items.Strings = (
+      '9600'
+      '19200')
+  end
+end

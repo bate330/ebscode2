@@ -1,0 +1,120 @@
+object MainForm: TMainForm
+  Left = 0
+  Top = 0
+  Caption = 'Open'
+  ClientHeight = 231
+  ClientWidth = 505
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'Tahoma'
+  Font.Style = []
+  OldCreateOrder = False
+  Visible = True
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  object ProgressBarLabel: TLabel
+    Left = 16
+    Top = 127
+    Width = 6
+    Height = 13
+    Caption = '0'
+  end
+  object ProgressBar: TProgressBar
+    Left = 16
+    Top = 96
+    Width = 473
+    Height = 25
+    TabOrder = 0
+  end
+  object OpenDialogButton: TButton
+    Left = 384
+    Top = 30
+    Width = 75
+    Height = 25
+    Caption = 'Open'
+    TabOrder = 1
+    OnClick = OpenDialogButtonClick
+  end
+  object OpenDialogTextBox: TEdit
+    Left = 16
+    Top = 32
+    Width = 353
+    Height = 21
+    TabOrder = 2
+    Text = 'File..'
+  end
+  object StartButton: TButton
+    Left = 16
+    Top = 167
+    Width = 75
+    Height = 25
+    Action = StartAction
+    Caption = 'Start'
+    DoubleBuffered = True
+    ParentDoubleBuffered = False
+    TabOrder = 3
+    Visible = False
+  end
+  object Memo1: TMemo
+    Left = 184
+    Top = 198
+    Width = 185
+    Height = 25
+    Lines.Strings = (
+      'Memo1')
+    TabOrder = 4
+    Visible = False
+  end
+  object ClearButton: TButton
+    Left = 384
+    Top = 198
+    Width = 75
+    Height = 25
+    Caption = 'Clear'
+    TabOrder = 5
+    Visible = False
+    OnClick = ClearButtonClick
+  end
+  object Button1: TButton
+    Left = 384
+    Top = 136
+    Width = 75
+    Height = 25
+    Action = ShowConfigAction
+    Caption = 'Konfiguracja'
+    TabOrder = 6
+  end
+  object SendButton: TButton
+    Left = 384
+    Top = 167
+    Width = 75
+    Height = 25
+    Caption = 'Send'
+    TabOrder = 7
+    Visible = False
+    OnClick = ClearButtonClick
+  end
+  object OpenDialog: TOpenDialog
+    Left = 192
+    Top = 144
+  end
+  object Actions: TActionList
+    Left = 280
+    Top = 144
+    object StartAction: TAction
+      Caption = 'StartAction'
+      OnExecute = StartActionExecute
+    end
+    object StopAction: TAction
+      Caption = 'StopAction'
+      OnExecute = StopActionExecute
+    end
+    object ShowConfigAction: TAction
+      Caption = 'Konfiguracja...'
+      OnExecute = ShowConfigActionExecute
+    end
+  end
+end

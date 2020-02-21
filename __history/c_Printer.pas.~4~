@@ -1,0 +1,181 @@
+unit c_Printer;
+
+interface
+uses
+System.SysUtils, System.Classes, mpComPort, PrinterThread;
+
+//==============================================================================
+type
+
+  TPrinter = class(TObject)
+  private
+    Com: TmpComPort;
+    Thread: TPrinterThread;
+
+
+    function GetPort: Byte;
+    procedure SetPort(const AValue: Byte);
+    function GetBaudRate: Integer;
+    procedure SetBaudRate(const Value: Integer);
+    function IsRunning: Boolean;
+    procedure ThreadTerminated(ASender: TObject);
+    function GetEbsData(const AText: string): TArray<Byte>;
+    procedure ThreadAckReceived(ASender: TObject);
+
+  public
+    OnStop: TNotifyEvent;
+    OnAck: TNotifyEvent;
+
+    constructor Create;
+    destructor Destroy; override;
+
+    procedure Connect;
+    procedure Disconnect;
+    procedure Start;
+    procedure Stop;
+    procedure SendNow(const AText: string);
+    function AckReceived: Boolean;
+    procedure Send(const AText: string);
+
+
+    property Port: Byte read GetPort write SetPort;
+    property BaudRate: Integer read GetBaudRate write SetBaudRate;
+    property Running: Boolean read IsRunning;
+
+  end;
+
+//==============================================================================
+var
+  Printer: TPrinter;
+
+
+
+//==============================================================================
+implementation
+{ TPrinter }
+
+const
+  ASCII_ACK = $06;
+
+
+function TPrinter.AckReceived: Boolean;
+begin
+  if Com.RxCount > 0 then
+    Result := Com.ReadByte = ASCII_ACK
+  else
+    Result := false;
+end;
+
+
+procedure TPrinter.Connect;
+begin
+  Com.Open;
+end;
+
+constructor TPrinter.Create;
+begin
+  inherited Create;
+  Com := TmpComPort.Create(nil);
+end;
+
+destructor TPrinter.Destroy;
+begin
+  FreeAndNil(Com);
+  inherited Destroy;
+end;
+
+procedure TPrinter.Disconnect;
+begin
+  Com.Close;
+end;
+
+function TPrinter.GetBaudRate: Integer;
+begin
+  Result := Com.Baudrate;
+end;
+
+
+function TPrinter.GetEbsData(const AText: string): TArray<Byte>;
+var
+  i: Integer;
+
+begin
+  SetLength(Result, 0);
+
+  for i:=1 to Length(AText) do
+    Result := Result + [Byte(AText[i])];
+
+  Result := Result + [$0D];
+
+end;
+
+
+function TPrinter.GetPort: Byte;
+begin
+  Result := Com.Port;
+end;
+
+function TPrinter.IsRunning: Boolean;
+begin
+  Result := Assigned(Thread);
+end;
+
+
+procedure TPrinter.Send(const AText: string);
+begin
+  if Assigned(Thread) then
+    Thread.DataToSend := AText;
+end;
+
+
+procedure TPrinter.SendNow(const AText: string);
+var
+  ATextData: TArray<Byte>;
+begin
+  ATextData := GetEbsData(AText);
+  Com.Write(ATextData, Length(ATextData));
+end;
+
+
+procedure TPrinter.SetBaudRate(const Value: Integer);
+begin
+  Com.BaudRate := Value;
+end;
+
+procedure TPrinter.SetPort(const AValue: Byte);
+begin
+  Com.Port := AValue;
+end;
+
+
+procedure TPrinter.Start;
+begin
+  if not Assigned(Thread) then
+  begin
+    Thread := TPrinterThread.Create;
+    Thread.OnTerminate := ThreadTerminated;
+    Thread.OnAck := ThreadAckReceived;
+  end;
+end;
+
+
+procedure TPrinter.Stop;
+begin
+  Thread.Terminate;
+end;
+
+
+procedure TPrinter.ThreadAckReceived(ASender: TObject);
+begin
+  if Assigned(OnAck) then OnAck(Self);
+end;
+
+
+procedure TPrinter.ThreadTerminated(ASender: TObject);
+begin
+  Thread := nil;
+  if Assigned(OnStop) then OnStop(Self);
+end;
+
+end.
+

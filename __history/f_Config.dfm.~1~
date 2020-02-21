@@ -1,0 +1,13 @@
+inherited ConfigForm: TConfigForm
+  Caption = 'Konfiguracja...'
+  PixelsPerInch = 96
+  TextHeight = 13
+  inherited CancelButton: TButton
+    ExplicitLeft = 421
+    ExplicitTop = 272
+  end
+  inherited OkButton: TButton
+    ExplicitLeft = 340
+    ExplicitTop = 272
+  end
+end

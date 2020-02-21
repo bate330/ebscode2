@@ -1,0 +1,42 @@
+unit PrinterThread;
+interface uses System.Classes;
+
+type
+
+  { TPrinterThread }
+
+ TPrinterThread = class(TThread)
+ private
+    procedure Initialize;
+
+ protected
+    procedure Execute(); override;
+
+ end;
+
+//==============================================================================
+implementation uses Forms, c_Printer;
+
+{ TPrinterThread }
+
+procedure TPrinterThread.Execute();
+begin
+  FreeOnTerminate := true;
+
+  try
+    OpenPort;
+
+    while not (Terminated or Application.Terminated) do
+    begin
+      Sleep(1000);
+    end;
+
+  finally
+    ClosePort;
+
+  end;
+
+end;
+
+end.
+

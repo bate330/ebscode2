@@ -1,0 +1,65 @@
+unit f_About;
+interface
+
+//==============================================================================
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, JvExStdCtrls,
+  JvMemo, Vcl.Imaging.pngimage, Vcl.ExtCtrls, JvExControls, JvGradient, JvLinkLabel;
+
+//==============================================================================
+type
+  TAboutForm = class(TForm)
+    Image: TImage;
+    AppNameLabel: TLabel;
+    AppVerLabel: TLabel;
+    OkButton: TButton;
+    Memo: TMemo;
+    procedure OkButtonClick(Sender: TObject);
+    procedure LinkLabelClick(Sender: TObject);
+  private
+    procedure LoadAppInfo;
+  public
+    function ShowModal: Integer; override;
+  end;
+
+//==============================================================================
+var
+  AboutForm: TAboutForm;
+
+//==============================================================================
+implementation uses ShellApi, AppInfo;
+
+{$R *.dfm}
+
+//==============================================================================
+{ TAboutForm }
+
+//------------------------------------------------------------------------------
+procedure TAboutForm.LinkLabelClick(Sender: TObject);
+begin
+  ShellExecute(0, 'Open', PChar(LinkLabel.Caption), '', nil, SW_SHOWNORMAL);
+end;
+
+//------------------------------------------------------------------------------
+procedure TAboutForm.LoadAppInfo;
+begin
+  AppNameLabel.Caption := TAppInfo.Name;
+  AppVerLabel.Caption := 'ver: ' + TAppInfo.Version.AsString;
+end;
+
+//------------------------------------------------------------------------------
+procedure TAboutForm.OkButtonClick(Sender: TObject);
+begin
+  Close;
+end;
+
+//------------------------------------------------------------------------------
+function TAboutForm.ShowModal: Integer;
+begin
+  LoadAppInfo;
+  Position := poMainFormCenter;
+  Result := inherited;
+end;
+
+end.

@@ -1,0 +1,129 @@
+unit f_Config;
+interface uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, f_Dialog, Vcl.StdCtrls, c_Config,
+  System.Actions, Vcl.ActnList;
+
+//==============================================================================
+type
+  TConfigForm = class(TDialogForm)
+    PortComboBox: TComboBox;
+    BaudrateComboBox: TComboBox;
+    procedure FormCreate(Sender: TObject);
+    procedure OpenButtonClick(Sender: TObject);
+
+  private
+    function GetPrinterPort: Byte;
+    procedure SetPrinterPort(const AValue: Byte);
+    function GetPrinterBaudrate: Integer;
+    procedure SetPrinterBaudrate(const AValue: Integer);
+
+  public
+    procedure LoadConfig;
+    procedure ApplyConfig;
+
+    property PrinterPort: Byte read GetPrinterPort write SetPrinterPort;
+    property PrinterBaudrate: Integer read GetPrinterBaudrate write SetPrinterBaudrate;
+
+  end;
+
+//==============================================================================
+var
+  ConfigForm: TConfigForm;
+
+//==============================================================================
+implementation
+
+//==============================================================================
+const
+  BAUDRATE_ARRAY: array [0..1] of Integer = ( 9600, 19200 );
+
+{$R *.dfm}
+
+procedure TConfigForm.ApplyConfig;
+begin
+  Config.PrinterPort := PrinterPort;
+  Config.PrinterBaudrate := PrinterBaudrate;
+end;
+
+//------------------------------------------------------------------------------
+//procedure TConfigForm.CloseActionExecute(Sender: TObject);
+//begin
+//  inherited;
+//    Running := true;
+//  UpdateCtrls;
+//end;
+
+procedure TConfigForm.FormCreate(Sender: TObject);
+var
+  i: Integer;
+begin
+  inherited;
+  for i:=1 to 255 do PortComboBox.Items.Add('COM'+IntToStr(i));
+end;
+
+//------------------------------------------------------------------------------
+function TConfigForm.GetPrinterBaudrate: Integer;
+begin
+  Result := BAUDRATE_ARRAY[BaudrateComboBox.ItemIndex];
+end;
+
+//------------------------------------------------------------------------------
+function TConfigForm.GetPrinterPort: Byte;
+begin
+  Result := PortComboBox.ItemIndex + 1;
+end;
+
+//------------------------------------------------------------------------------
+procedure TConfigForm.LoadConfig;
+begin
+  PrinterPort := Config.PrinterPort;
+  PrinterBaudrate := Config.PrinterBaudrate;
+end;
+
+//procedure TConfigForm.UpdateCtrls;
+//begin
+//  if Running then
+//  begin
+//     OpenButton.Action := OpenAction;
+//     OpenButton.Caption := 'Open'
+//  end else begin
+//     OpenButton.Action := CloseAction;
+//     OpenButton.Caption := 'Start'
+//  end;
+//end;
+
+//procedure TConfigForm.OpenActionExecute(Sender: TObject);
+//begin
+//  inherited;
+//    Running := false;
+//  UpdateCtrls;
+//end;
+
+procedure TConfigForm.OpenButtonClick(Sender: TObject);
+begin
+  inherited;
+
+end;
+
+//------------------------------------------------------------------------------
+procedure TConfigForm.SetPrinterBaudrate(const AValue: Integer);
+var
+  i: Integer;
+begin
+  BaudrateComboBox.ItemIndex := -1;
+  for i:=0 to Length(BAUDRATE_ARRAY)-1 do
+    if BAUDRATE_ARRAY[i] = AValue then
+    begin
+      BaudrateComboBox.ItemIndex := i;
+      Break;
+    end;
+end;
+
+//------------------------------------------------------------------------------
+procedure TConfigForm.SetPrinterPort(const AValue: Byte);
+begin
+  PortComboBox.ItemIndex := AValue - 1;
+end;
+
+end.

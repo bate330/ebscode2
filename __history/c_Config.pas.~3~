@@ -1,0 +1,70 @@
+unit c_Config;
+
+interface
+
+uses
+System.inifiles, Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, System.Actions,
+  Vcl.ActnList, Vcl.ComCtrls;
+//==============================================================================
+type
+  TConfig = class
+  private
+    function GetPort: Byte;
+    procedure SetPort(const AValue: Byte);
+    function GetPrinterBaudrate: Integer;
+    procedure SetPrinterBaudrate(const AValue: Integer);
+
+  public
+    procedure SaveToFile;
+    property PrinterPort: Byte read GetPort write SetPort;
+    property PrinterBaudrate: Integer read GetPrinterBaudrate write SetPrinterBaudrate;
+
+  end;
+
+//==============================================================================
+var
+  Config: TConfig;
+  IniFile : TIniFile;
+  LoadPort : Integer;
+  LoadBaud : Integer;
+
+//==============================================================================
+implementation uses c_Printer;
+
+{ TConfig }
+
+function TConfig.GetPrinterBaudrate: Integer;
+begin
+IniFile := TIniFile.Create(ExtractFilePath(Application.ExeName)+'myapp.ini') ;
+  Result := IniFile.ReadInteger('Config', 'Baud', 9600 );
+end;
+
+function TConfig.GetPort: Byte;
+begin
+IniFile := TIniFile.Create(ExtractFilePath(Application.ExeName)+'myapp.ini') ;
+  Result := IniFile.ReadInteger('Config', 'Port', 1 );
+end;
+
+procedure TConfig.SetPrinterBaudrate(const AValue: Integer);
+begin
+  c_Printer.Printer.BaudRate := AValue;
+end;
+
+procedure TConfig.SaveToFile;
+begin
+  IniFile := TIniFile.Create(ExtractFilePath(Application.ExeName)+'myapp.ini') ;
+ try
+  IniFile.WriteInteger('Config', 'Baud', c_Printer.Printer.BaudRate );
+  IniFile.WriteString('Config', 'Port', c_Printer.Printer.Port.ToString );
+ finally
+  IniFile.Free;
+ end;
+end;
+
+procedure TConfig.SetPort(const AValue: Byte);
+begin
+  c_Printer.Printer.Port := AValue;
+end;
+
+end.

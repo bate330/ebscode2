@@ -1,0 +1,35 @@
+program Project4;
+
+uses
+  Vcl.Forms,
+  SysUtils,
+  f_Main in 'f_Main.pas' {MainForm},
+  PrinterThread in 'PrinterThread.pas',
+  c_Printer in 'c_Printer.pas',
+  f_Dialog in 'f_Dialog.pas' {DialogForm},
+  f_Config in 'f_Config.pas' {ConfigForm},
+  c_Config in 'c_Config.pas',
+  mpcomport in 'mpcomport.pas';
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TMainForm, MainForm);
+  Application.CreateForm(TDialogForm, DialogForm);
+  Application.CreateForm(TConfigForm, ConfigForm);
+
+  Printer := TPrinter.Create;
+  Printer.OnStop := MainForm.PrinterStopped;
+  Printer.OnAck := MainForm.PrinterAckReceived;
+
+  Config := TConfig.Create;
+  Config.LoadToFile;
+
+  Application.Run;
+
+  FreeAndNil(Config);
+  FreeAndNil(Printer);
+
+end.
